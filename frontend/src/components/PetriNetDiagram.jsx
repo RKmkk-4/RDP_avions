@@ -32,7 +32,7 @@ const PetriNetDiagram = ({ petriNet, enabledTransitions, onTransitionClick }) =>
         {place.tokens > 0 ? (
           Array.from({ length: Math.min(place.tokens, 8) }, (_, i) => (
             <div
-              key={i}
+              key={`${placeId}-token-${i}`}
               className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full shadow-md flex items-center justify-center text-xs font-bold text-white"
             >
               {place.tokens > 8 && i === 7 ? `+${place.tokens - 7}` : '●'}
