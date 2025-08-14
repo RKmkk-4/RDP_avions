@@ -118,7 +118,7 @@ const PetriNetSimulator = () => {
       toast({
         title: `Transition ${randomTransition} exécutée`,
         description: petriNet.transitions[randomTransition].label,
-        duration: 2000
+        duration: 1500
       });
     }
   }, [getEnabledTransitions, fireTransition, toast, petriNet.transitions]);
