@@ -291,9 +291,9 @@ const PetriNetSimulator = () => {
                 <div className="space-y-2">
                   {enabledTransitions.length > 0 ? (
                     enabledTransitions.map(transitionId => (
-                      <div key={transitionId} className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <div key={`enabled-${transitionId}-${step}`} className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <span className="font-medium">{transitionId}</span>
-                        <Badge variant="secondary">{petriNet.transitions[transitionId].label}</Badge>
+                        <Badge variant="secondary">{petriNet.transitions[transitionId]?.label || 'Transition'}</Badge>
                       </div>
                     ))
                   ) : (
