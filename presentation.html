@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réseau de Petri - Gestion d'Aéroport</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .slideshow-container {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            padding: 2rem;
+            text-align: center;
+            max-width: 1200px;
+            width: 90%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #FFD700;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #87CEEB;
+        }
+
+        p, li {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+
+        .petri-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .place {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border: 3px solid #FFD700;
+        }
+
+        .transition {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: #FFD700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        ul {
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .highlight {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tech-item {
+            text-align: center;
+        }
+
+        .tech-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">12</span>
+        </div>
+
+        <!-- Slide 1: Titre -->
+        <div class="slide active">
+            <h1>🛩️ Réseau de Petri</h1>
+            <h2>Gestion d'Aéroport</h2>
+            <p style="font-size: 1.5rem; margin-top: 2rem;">
+                Simulation Interactive du Flux d'Avions
+            </p>
+            <p style="font-size: 1.2rem; opacity: 0.8; margin-top: 1rem;">
+                Modélisation et Analyse par Réseau de Petri
+            </p>
+            <div style="margin-top: 3rem;">
+                <div class="icon">✈️ 🏢 📊</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Problématique -->
+        <div class="slide">
+            <h2>🎯 Problématique</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🛬</div>
+                    <h3>Gestion du Trafic</h3>
+                    <p>Comment optimiser le flux d'avions dans un aéroport ?</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🚪</div>
+                    <h3>Ressources Limitées</h3>
+                    <p>Une seule passerelle d'embarquement disponible</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h3>Goulots d'Étranglement</h3>
+                    <p>Identifier et résoudre les blocages système</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📈</div>
+                    <h3>Performance</h3>
+                    <p>Maximiser le débit tout en respectant les contraintes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Modèle de Petri -->
+        <div class="slide">
+            <h2>🔬 Modélisation par Réseau de Petri</h2>
+            <div class="petri-diagram">
+                <div class="place">
+                    <div>P1</div>
+                    <small>Vol</small>
+                </div>
+                <div class="arrow">→</div>
+                <div class="transition">T1</div>
+                <div class="arrow">→</div>
+                <div class="place">
+                    <div>P2</div>
+                    <small>Attente</small>
+                </div>
+            </div>
+            <div class="petri-diagram">
+                <div class="place">
+                    <div>P4</div>
+                    <small>Passerelle</small>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="transition">T2</div>
+                <div class="arrow">→</div>
+                <div class="place">
+                    <div>P3</div>
+                    <small>Embarq.</small>
+                </div>
+            </div>
+            <p><span class="highlight">5 Places</span> - <span class="highlight">4 Transitions</span> - <span class="highlight">1 Ressource Partagée</span></p>
+        </div>
+
+        <!-- Slide 4: États du Système -->
+        <div class="slide">
+            <h2>📍 États du Système (Places)</h2>
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(45deg, #2196F3, #1976D2);">
+                    <div class="stat-number">P1</div>
+                    <div>Avions en Vol</div>
+                    <small>(Initial: 3 jetons)</small>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(45deg, #FF9800, #F57C00);">
+                    <div class="stat-number">P2</div>
+                    <div>En Attente</div>
+                    <small>(Initial: 0 jetons)</small>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(45deg, #4CAF50, #388E3C);">
+                    <div class="stat-number">P3</div>
+                    <div>Embarquement</div>
+                    <small>(Initial: 0 jetons)</small>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(45deg, #9C27B0, #7B1FA2);">
+                    <div class="stat-number">P4</div>
+                    <div>Passerelle Libre</div>
+                    <small>(Initial: 1 jeton)</small>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(45deg, #3F51B5, #303F9F);">
+                    <div class="stat-number">P5</div>
+                    <div>Prêt Décollage</div>
+                    <small>(Initial: 0 jetons)</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Transitions -->
+        <div class="slide">
+            <h2>🔄 Actions du Système (Transitions)</h2>
+            <div class="feature-grid">
+                <div class="feature-card" style="border-left: 5px solid #2196F3;">
+                    <h3>T1 - Atterrissage</h3>
+                    <p><strong>Entrée:</strong> P1 (1 jeton)</p>
+                    <p><strong>Sortie:</strong> P2 (1 jeton)</p>
+                    <p>Un avion passe de "en vol" à "en attente"</p>
+                </div>
+                <div class="feature-card" style="border-left: 5px solid #FF9800;">
+                    <h3>T2 - Début Embarquement</h3>
+                    <p><strong>Entrée:</strong> P2 + P4 (1+1 jetons)</p>
+                    <p><strong>Sortie:</strong> P3 (1 jeton)</p>
+                    <p>Nécessite avion en attente ET passerelle libre</p>
+                </div>
+                <div class="feature-card" style="border-left: 5px solid #4CAF50;">
+                    <h3>T3 - Fin Embarquement</h3>
+                    <p><strong>Entrée:</strong> P3 (1 jeton)</p>
+                    <p><strong>Sortie:</strong> P5 + P4 (1+1 jetons)</p>
+                    <p>Libère la passerelle et prépare au décollage</p>
+                </div>
+                <div class="feature-card" style="border-left: 5px solid #3F51B5;">
+                    <h3>T4 - Décollage</h3>
+                    <p><strong>Entrée:</strong> P5 (1 jeton)</p>
+                    <p><strong>Sortie:</strong> P1 (1 jeton)</p>
+                    <p>L'avion retourne en vol (cycle complet)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Fonctionnalités -->
+        <div class="slide">
+            <h2>🚀 Fonctionnalités Développées</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <h3>Interface Interactive</h3>
+                    <p>Visualisation moderne avec React et shadcn/ui</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h3>Simulation Temps Réel</h3>
+                    <p>Mode manuel et automatique avec contrôle de vitesse</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📊</div>
+                    <h3>Analytics Avancées</h3>
+                    <p>Statistiques en temps réel et détection de goulots</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💾</div>
+                    <h3>Persistance</h3>
+                    <p>Sauvegarde des simulations en MongoDB</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔄</div>
+                    <h3>Historique Complet</h3>
+                    <p>Traçabilité de toutes les transitions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📱</div>
+                    <h3>Responsive Design</h3>
+                    <p>Adaptation automatique à tous les écrans</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Architecture Technique -->
+        <div class="slide">
+            <h2>🏗️ Architecture Technique</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <div class="tech-logo" style="background: linear-gradient(45deg, #61DAFB, #21D4FD);">⚛️</div>
+                    <h3>React</h3>
+                    <p>Interface utilisateur</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-logo" style="background: linear-gradient(45deg, #009688, #4DB6AC);">🚀</div>
+                    <h3>FastAPI</h3>
+                    <p>Backend REST</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-logo" style="background: linear-gradient(45deg, #4DB33D, #68D391);">🍃</div>
+                    <h3>MongoDB</h3>
+                    <p>Base de données</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-logo" style="background: linear-gradient(45deg, #38B2AC, #81E6D9);">🎨</div>
+                    <h3>Tailwind</h3>
+                    <p>Styles CSS</p>
+                </div>
+            </div>
+            <div style="margin-top: 3rem; padding: 2rem; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                <h3>🔄 Flux de Données</h3>
+                <p style="font-size: 1.5rem;">
+                    Frontend ↔️ API REST ↔️ Logique Métier ↔️ MongoDB
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Métriques et KPI -->
+        <div class="slide">
+            <h2>📊 Métriques et KPI</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">⏱️</div>
+                    <div>Débit</div>
+                    <small>Avions/heure</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🚪</div>
+                    <div>Utilisation</div>
+                    <small>% Passerelle occupée</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">⏳</div>
+                    <div>Attente</div>
+                    <small>Temps moyen</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔍</div>
+                    <div>Goulots</div>
+                    <small>Détection auto</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">📈</div>
+                    <div>Efficacité</div>
+                    <small>Ratio global</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🎯</div>
+                    <div>Vivacité</div>
+                    <small>Cycles complets</small>
+                </div>
+            </div>
+            <p style="margin-top: 2rem;">
+                <span class="highlight">Calculs en temps réel</span> - 
+                <span class="highlight">Alertes automatiques</span> - 
+                <span class="highlight">Historique persistant</span>
+            </p>
+        </div>
+
+        <!-- Slide 9: Scénarios de Test -->
+        <div class="slide">
+            <h2>🧪 Scénarios de Test</h2>
+            <div class="feature-grid">
+                <div class="feature-card" style="border: 2px solid #4CAF50;">
+                    <div class="icon">✈️</div>
+                    <h3>Trafic Normal</h3>
+                    <p><strong>Configuration:</strong> 3 avions en vol, 1 passerelle</p>
+                    <p><strong>Objectif:</strong> Fonctionnement fluide standard</p>
+                </div>
+                <div class="feature-card" style="border: 2px solid #FF9800;">
+                    <div class="icon">🚫</div>
+                    <h3>Goulot d'Étranglement</h3>
+                    <p><strong>Configuration:</strong> Passerelle occupée, avions en attente</p>
+                    <p><strong>Objectif:</strong> Détection automatique des blocages</p>
+                </div>
+                <div class="feature-card" style="border: 2px solid #F44336;">
+                    <div class="icon">🔥</div>
+                    <h3>Trafic Intense</h3>
+                    <p><strong>Configuration:</strong> 5+ avions simultanés</p>
+                    <p><strong>Objectif:</strong> Test de surcharge système</p>
+                </div>
+                <div class="feature-card" style="border: 2px solid #2196F3;">
+                    <div class="icon">🌅</div>
+                    <h3>Redémarrage</h3>
+                    <p><strong>Configuration:</strong> Aéroport vide</p>
+                    <p><strong>Objectif:</strong> Montée en charge progressive</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Résultats -->
+        <div class="slide">
+            <h2>🏆 Résultats et Validation</h2>
+            <div style="text-align: left; max-width: 900px; margin: 0 auto;">
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #4CAF50;">✅ Tests de Vivacité</h3>
+                    <ul>
+                        <li>Cycle complet Vol → Atterrissage → Embarquement → Décollage ✓</li>
+                        <li>Aucun blocage permanent dans configurations normales ✓</li>
+                        <li>Récupération automatique après exceptions ✓</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2196F3;">🔄 Tests de Concurrence</h3>
+                    <ul>
+                        <li>Plusieurs avions en vol simultanément ✓</li>
+                        <li>Un seul avion utilise la passerelle à la fois ✓</li>
+                        <li>File d'attente respectée (FIFO) ✓</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: #FF9800;">⚡ Tests de Performance</h3>
+                    <ul>
+                        <li>Interface réactive avec 100+ transitions ✓</li>
+                        <li>Calculs statistiques en temps réel ✓</li>
+                        <li>Mémoire stable sur simulations longues ✓</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Impact Pédagogique -->
+        <div class="slide">
+            <h2>🎓 Impact Pédagogique</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">👨‍🎓</div>
+                    <h3>Pour les Étudiants</h3>
+                    <ul style="text-align: left;">
+                        <li>Apprentissage interactif des réseaux de Petri</li>
+                        <li>Visualisation concrète de concepts abstraits</li>
+                        <li>Expérimentation libre avec paramètres</li>
+                        <li>Compréhension pratique de la modélisation</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👨‍🏫</div>
+                    <h3>Pour les Enseignants</h3>
+                    <ul style="text-align: left;">
+                        <li>Outil de démonstration en cours</li>
+                        <li>Support d'exercices pratiques</li>
+                        <li>Évaluation par simulation</li>
+                        <li>Adaptation à différents niveaux</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; padding: 2rem; background: rgba(255,215,0,0.2); border-radius: 15px;">
+                <h3>🌟 Innovation Pédagogique</h3>
+                <p>Démocratisation de l'apprentissage des réseaux de Petri par une interface moderne et intuitive</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Conclusion -->
+        <div class="slide">
+            <h1>🎯 Conclusion</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">✅</div>
+                    <h3>Objectifs Atteints</h3>
+                    <p>Modélisation complète et simulation fonctionnelle du système aéroportuaire</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🚀</div>
+                    <h3>Innovation Technique</h3>
+                    <p>Interface moderne pour concepts formels avec analytics avancés</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📈</div>
+                    <h3>Valeur Ajoutée</h3>
+                    <p>Outil pédagogique et professionnel pour l'analyse de flux</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔮</div>
+                    <h3>Perspectives</h3>
+                    <p>Base extensible pour recherches et applications avancées</p>
+                </div>
+            </div>
+            <div style="margin-top: 3rem;">
+                <h2 style="color: #FFD700;">Merci pour votre attention !</h2>
+                <p style="font-size: 1.2rem; opacity: 0.8;">
+                    Questions et démonstration en direct
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">‹</button>
+        <button class="nav-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Navigation au clavier
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Auto-play optionnel (décommenté si souhaité)
+        // setInterval(nextSlide, 10000); // Change slide every 10 seconds
+    </script>
+</body>
+</html>
