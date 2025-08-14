@@ -307,32 +307,32 @@ const PetriNetSimulator = () => {
           </div>
         </div>
 
-        {/* History */}
-        {history.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Historique des Transitions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="max-h-60 overflow-y-auto space-y-2">
-                {history.slice(-10).reverse().map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline">Étape {entry.step}</Badge>
-                      <span className="font-medium">{entry.transition}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {petriNet.transitions[entry.transition]?.label}
-                      </span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(entry.timestamp).toLocaleTimeString()}
-                    </span>
+            {/* History */}
+            {history.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Historique des Transitions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="max-h-60 overflow-y-auto space-y-2">
+                    {history.slice(-10).reverse().map((entry, index) => (
+                      <div key={`${entry.step}-${entry.transition}-${index}`} className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline">Étape {entry.step}</Badge>
+                          <span className="font-medium">{entry.transition}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {petriNet.transitions[entry.transition]?.label}
+                          </span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(entry.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </CardContent>
+              </Card>
+            )}
       </div>
     </div>
   );
