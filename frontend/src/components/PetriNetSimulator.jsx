@@ -138,10 +138,10 @@ const PetriNetSimulator = () => {
 
   // Reset simulation
   const handleReset = () => {
-    setPetriNet(mockPetriNetData);
+    setIsRunning(false);
+    setPetriNet(JSON.parse(JSON.stringify(mockPetriNetData))); // Deep clone
     setStep(0);
     setHistory([]);
-    setIsRunning(false);
     toast({
       title: "Simulation réinitialisée",
       description: "Retour à l'état initial",
