@@ -58,8 +58,9 @@ const PetriNetSimulator = () => {
   const fireTransition = useCallback((transitionId) => {
     if (!isTransitionEnabled(transitionId)) return false;
 
+    let newStep;
     setPetriNet(prev => {
-      const newState = { ...prev };
+      const newState = JSON.parse(JSON.stringify(prev)); // Deep clone
       const transition = newState.transitions[transitionId];
       
       // Remove tokens from input places
@@ -75,9 +76,12 @@ const PetriNetSimulator = () => {
       return newState;
     });
 
-    setStep(prev => prev + 1);
+    setStep(prev => {
+      newStep = prev + 1;
+      return newStep;
+    });
     
-    // Add to history
+    // Add to history with the correct step number
     setHistory(prev => [...prev, {
       step: step + 1,
       transition: transitionId,
